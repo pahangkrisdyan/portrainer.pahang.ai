@@ -8,5 +8,39 @@ services:
       - portainer_data:/data
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+    networks:
+      - portainer_network
+
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/letsencrypt:/etc/letsencrypt
+      - ./nginx/www:/var/www/html
+    restart: unless-stopped
+    networks:
+      - portainer_network
+    depends_on:
+      - portainer
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./nginx/letsencrypt:/etc/letsencrypt
+      - ./nginx/www:/var/www/html
+    networks:
+      - portainer_network
+
 volumes:
   portainer_data:
+
+networks:
+  portainer_network:
+    driver: bridge
