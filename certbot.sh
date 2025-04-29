@@ -3,6 +3,7 @@
 # Domains to get certificates for
 DOMAINS=(
     "portrainer.pahang.ai"
+    "chat.pahang.ai"
 )
 
 # Create certificates for each domain
