@@ -38,8 +38,37 @@ services:
     networks:
       - portainer_network
 
+  scira-mcp-chat:
+    image: docker.io/pahangkrisdyan/scira-mcp-chat
+    container_name: scira-mcp-chat
+    ports:
+      - 3000:3000
+    environment:
+      - XAI_API_KEY=${XAI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - DATABASE_URL=postgresql://${SCIRA_DB_USER}:${SCIRA_DB_PASSWORD}@scira-mcp-chat-db:5432/${SCIRA_DB_NAME}
+    restart: unless-stopped
+    networks:
+      - portainer_network
+    depends_on:
+      - scira-mcp-chat-db
+
+  scira-mcp-chat-db:
+    image: postgres:15
+    container_name: scira-mcp-chat-db
+    environment:
+      - POSTGRES_USER=${SCIRA_DB_USER}
+      - POSTGRES_PASSWORD=${SCIRA_DB_PASSWORD}
+      - POSTGRES_DB=${SCIRA_DB_NAME}
+    volumes:
+      - scira_mcp_chat_db_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - portainer_network
+
 volumes:
   portainer_data:
+  scira_mcp_chat_db_data:
 
 networks:
   portainer_network:
