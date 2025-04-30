@@ -39,7 +39,7 @@ services:
       - portainer_network
 
   scira-mcp-chat:
-    image: docker.io/pahangkrisdyan/scira-mcp-chat
+    image: docker.io/pahangkrisdyan/scira-mcp-chat:latest
     platform: linux/amd64
     container_name: scira-mcp-chat
     ports:
