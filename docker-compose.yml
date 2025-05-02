@@ -1,16 +1,4 @@
 services:
-  portainer:
-    image: portainer/portainer-ce:latest
-    container_name: portainer
-    ports:
-      - 9000:9000
-    volumes:
-      - portainer_data:/data
-      - /var/run/docker.sock:/var/run/docker.sock
-    restart: unless-stopped
-    networks:
-      - portainer_network
-
   nginx:
     image: nginx:latest
     container_name: nginx
@@ -25,9 +13,7 @@ services:
       - ./nginx/www:/var/www/html
     restart: unless-stopped
     networks:
-      - portainer_network
-    depends_on:
-      - portainer
+      - app_network
 
   certbot:
     image: certbot/certbot
@@ -36,7 +22,7 @@ services:
       - ./nginx/letsencrypt:/etc/letsencrypt
       - ./nginx/www:/var/www/html
     networks:
-      - portainer_network
+      - app_network
 
   scira-mcp-chat:
     image: docker.io/pahangkrisdyan/scira-mcp-chat:latest
@@ -50,7 +36,7 @@ services:
       - DATABASE_URL=postgresql://${SCIRA_DB_USER}:${SCIRA_DB_PASSWORD}@scira-mcp-chat-db:5432/${SCIRA_DB_NAME}
     restart: unless-stopped
     networks:
-      - portainer_network
+      - app_network
     depends_on:
       - scira-mcp-chat-db
 
@@ -65,12 +51,11 @@ services:
       - scira_mcp_chat_db_data:/var/lib/postgresql/data
     restart: unless-stopped
     networks:
-      - portainer_network
+      - app_network
 
 volumes:
-  portainer_data:
   scira_mcp_chat_db_data:
 
 networks:
-  portainer_network:
+  app_network:
     driver: bridge
